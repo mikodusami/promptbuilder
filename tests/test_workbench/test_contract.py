@@ -8,7 +8,7 @@ Validates: Requirements 1.1, 1.2, 1.4
 import pytest
 from hypothesis import given, strategies as st, settings
 
-from src.workbench.contrib.contract import (
+from src.workbench.contract import (
     FeatureCategory,
     FeatureManifest,
     FeatureContext,

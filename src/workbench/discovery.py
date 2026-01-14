@@ -77,11 +77,11 @@ class DiscoveryEngine:
         """Initialize the discovery engine.
         
         Args:
-            contrib_path: Path to the contrib directory. Defaults to src/contrib/
+            contrib_path: Path to the contrib directory. Defaults to src/workbench/contrib/
         """
         if contrib_path is None:
-            # Default to src/contrib/ relative to the project root
-            self.contrib_path = Path(__file__).parent.parent.parent / "contrib"
+            # Default to src/workbench/contrib/ relative to this file
+            self.contrib_path = Path(__file__).parent / "contrib"
         else:
             self.contrib_path = contrib_path
         self.verbose = False

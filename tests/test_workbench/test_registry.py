@@ -10,16 +10,16 @@ import tempfile
 from pathlib import Path
 from hypothesis import given, strategies as st, settings, assume
 
-from src.workbench.contrib.registry import (
+from src.workbench.registry import (
     FeatureRegistry,
     get_registry,
     reset_registry,
 )
-from src.workbench.contrib.discovery import (
+from src.workbench.discovery import (
     DiscoveryEngine,
     LoadedFeature,
 )
-from src.workbench.contrib.contract import (
+from src.workbench.contract import (
     FeatureCategory,
     FeatureManifest,
     FeatureResult,

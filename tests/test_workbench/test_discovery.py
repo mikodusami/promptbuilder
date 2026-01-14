@@ -12,13 +12,13 @@ import shutil
 from pathlib import Path
 from hypothesis import given, strategies as st, settings, assume
 
-from src.workbench.contrib.discovery import (
+from src.workbench.discovery import (
     DiscoveryEngine,
     LoadedFeature,
     DiscoveryResult,
     DiscoveryError,
 )
-from src.workbench.contrib.contract import (
+from src.workbench.contract import (
     FeatureCategory,
     FeatureManifest,
     FeatureResult,
@@ -60,7 +60,7 @@ def create_manifest_file(path: Path, name: str, display_name: str, description: 
     description_escaped = escape_string(description)
     
     content = f'''"""Auto-generated manifest for testing."""
-from src.workbench.contrib.contract import (
+from src.workbench.contract import (
     FeatureManifest,
     FeatureCategory,
     FeatureContext,

@@ -1,48 +1,9 @@
-"""Contrib discovery and registration infrastructure.
+"""Contrib feature implementations.
 
-This module provides the contracts, discovery engine, registry, and CLI
-integration for the dynamic contrib feature system.
+This package contains the feature implementations that are discovered
+and loaded by the workbench infrastructure.
 
-Public Exports:
-    - FeatureCategory: Enum of standard feature categories
-    - FeatureManifest: Dataclass for feature metadata
-    - FeatureContext: Runtime context passed to features
-    - FeatureResult: Result returned from feature execution
-    - FeatureRunner: Type alias for run function signature
-    - get_registry: Get the global feature registry
-    - reset_registry: Reset the global registry (for testing)
-    - FeatureRegistry: The registry class itself
-    - CLIIntegration: Bridge between registry and CLI menu
+Each feature should have its own subdirectory with:
+- manifest.py: Feature metadata and run function
+- service.py: Feature implementation (optional, for legacy support)
 """
-
-from src.workbench.contrib.contract import (
-    FeatureCategory,
-    FeatureManifest,
-    FeatureContext,
-    FeatureResult,
-    FeatureRunner,
-)
-
-from src.workbench.contrib.registry import (
-    FeatureRegistry,
-    get_registry,
-    reset_registry,
-)
-
-# These will be imported once implemented
-# from src.workbench.contrib.integration import CLIIntegration
-
-__all__ = [
-    # Contract types
-    "FeatureCategory",
-    "FeatureManifest",
-    "FeatureContext",
-    "FeatureResult",
-    "FeatureRunner",
-    # Registry
-    "FeatureRegistry",
-    "get_registry",
-    "reset_registry",
-    # CLI Integration (to be added)
-    # "CLIIntegration",
-]
