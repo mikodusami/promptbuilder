@@ -87,7 +87,7 @@ techniques = [
 ### History Service
 
 ```python
-from src.contrib.history.service import HistoryService
+from src.workbench.contrib.history.service import HistoryService
 
 history = HistoryService()
 
@@ -120,7 +120,7 @@ history.delete(prompt_id)
 ### Template Service
 
 ```python
-from src.contrib.templates.service import TemplateService
+from src.workbench.contrib.templates.service import TemplateService
 
 templates = TemplateService()
 
@@ -191,7 +191,7 @@ asyncio.run(generate())
 
 ```python
 import asyncio
-from src.contrib.optimizer.service import OptimizerService
+from src.workbench.contrib.optimizer.service import OptimizerService
 from src.services.llm.client import LLMClient
 
 client = LLMClient()
@@ -215,8 +215,8 @@ asyncio.run(optimize())
 
 ```python
 import asyncio
-from src.contrib.chains.service import ChainService
-from src.contrib.chains.common import ChainStep, PromptChain
+from src.workbench.contrib.chains.service import ChainService
+from src.workbench.contrib.chains.common import ChainStep, PromptChain
 from src.services.llm.client import LLMClient
 
 client = LLMClient()
@@ -256,7 +256,7 @@ asyncio.run(run_chain())
 ### Analytics
 
 ```python
-from src.contrib.analytics.service import PromptAnalytics
+from src.workbench.contrib.analytics.service import PromptAnalytics
 
 analytics = PromptAnalytics()
 
@@ -291,8 +291,8 @@ import asyncio
 from main import quick_build
 from src.services.llm.client import LLMClient
 from src.services.token_counter import TokenCounter
-from src.contrib.history.service import HistoryService
-from src.contrib.analytics.service import PromptAnalytics
+from src.workbench.contrib.history.service import HistoryService
+from src.workbench.contrib.analytics.service import PromptAnalytics
 
 async def main():
     # Initialize services
@@ -341,4 +341,25 @@ async def main():
     print(f"Saved as ID: {prompt_id}")
 
 asyncio.run(main())
+```
+
+## Using the Discovery System
+
+Access features through the workbench discovery system:
+
+```python
+from src.workbench import get_registry, CLIIntegration, FeatureCategory
+
+# Get the feature registry
+registry = get_registry()
+
+# Query features
+optimizer = registry.get("optimizer")
+ai_features = registry.list_by_category(FeatureCategory.AI)
+all_features = registry.list_all()
+
+# Check what's available
+for feature in ai_features:
+    m = feature.manifest
+    print(f"{m.icon} {m.display_name}: {m.description}")
 ```

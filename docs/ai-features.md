@@ -4,18 +4,17 @@ AI-powered features require at least one LLM provider API key configured.
 
 ## Accessing AI Features
 
-Press `a` from the main menu to access AI features.
+Select 🤖 AI Features from the main menu to access AI-powered features.
 
 ```
-🤖 AI Features
+🤖 AI Features (↑↓ to navigate, Enter to select)
 
-  [g] 🪄 Generate from Description  - Describe task in plain English
-  [o] ✨ Optimize Prompt            - AI-powered prompt improvement
-  [t] 🧪 Test Prompt                - Test against multiple models
-  [c] ⛓️  Prompt Chains              - Multi-step workflows
-  [s] 📤 Share & Import             - Export/import prompt libraries
-  [a] 📊 Analytics                  - View usage statistics
-  [b] 🔙 Back
+  🪄 Generate from Description  - Describe task in plain English
+  ✨ Optimize Prompt            - AI-powered prompt improvement
+  🧪 Test Prompt                - Test against multiple models
+  ⛓️  Prompt Chains              - Multi-step workflows
+  📊 Analytics                  - View usage statistics
+  🔙 Back                       - Return to main menu
 ```
 
 ## Generate from Description 🪄
@@ -24,7 +23,7 @@ Create prompts by describing what you want in plain English.
 
 ### How to Use
 
-1. Press `g` from AI Features menu
+1. Select 🪄 Generate from Description from AI Features menu
 2. Describe your task naturally
 3. Optionally add context
 4. AI generates the optimal prompt with the best technique
@@ -67,7 +66,7 @@ Improve existing prompts using AI analysis.
 
 ### How to Use
 
-1. Press `o` from AI Features menu
+1. Select ✨ Optimize Prompt from AI Features menu
 2. Paste your existing prompt
 3. Optionally describe what it's for
 4. AI analyzes and improves it
@@ -113,7 +112,7 @@ Test your prompts across multiple LLM models to compare responses.
 
 ### How to Use
 
-1. Press `t` from AI Features menu
+1. Select 🧪 Test Prompt from AI Features menu
 2. Enter the prompt to test
 3. AI runs it against available models
 4. Compare responses side-by-side
