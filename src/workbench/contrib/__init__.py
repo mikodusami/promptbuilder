@@ -10,6 +10,8 @@ Public Exports:
     - FeatureResult: Result returned from feature execution
     - FeatureRunner: Type alias for run function signature
     - get_registry: Get the global feature registry
+    - reset_registry: Reset the global registry (for testing)
+    - FeatureRegistry: The registry class itself
     - CLIIntegration: Bridge between registry and CLI menu
 """
 
@@ -21,8 +23,13 @@ from src.workbench.contrib.contract import (
     FeatureRunner,
 )
 
+from src.workbench.contrib.registry import (
+    FeatureRegistry,
+    get_registry,
+    reset_registry,
+)
+
 # These will be imported once implemented
-# from src.workbench.contrib.registry import get_registry
 # from src.workbench.contrib.integration import CLIIntegration
 
 __all__ = [
@@ -32,8 +39,10 @@ __all__ = [
     "FeatureContext",
     "FeatureResult",
     "FeatureRunner",
-    # Registry (to be added)
-    # "get_registry",
+    # Registry
+    "FeatureRegistry",
+    "get_registry",
+    "reset_registry",
     # CLI Integration (to be added)
     # "CLIIntegration",
 ]
