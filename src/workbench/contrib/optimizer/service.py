@@ -3,7 +3,7 @@ Optimizer feature - AI-powered prompt optimization service.
 """
 
 import json
-from ...services.llm import LLMClient
+from src.services.llm import LLMClient
 from .common import OptimizationResult
 
 

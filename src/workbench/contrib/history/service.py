@@ -5,7 +5,7 @@ History feature - service for managing prompt history.
 import sqlite3
 from typing import Optional
 
-from ...platform.storage import BaseStorage
+from src.platform.storage import BaseStorage
 from .common import SavedPrompt
 
 

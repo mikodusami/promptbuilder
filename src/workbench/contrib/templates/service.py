@@ -5,7 +5,7 @@ Templates feature - service for managing custom templates.
 from typing import Optional
 from pathlib import Path
 
-from ...platform.environment import get_config_dir
+from src.platform.environment import get_config_dir
 from .common import CustomTemplate
 
 try:

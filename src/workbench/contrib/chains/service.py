@@ -8,8 +8,8 @@ from datetime import datetime
 from typing import Any, Callable, Optional
 from pathlib import Path
 
-from ...platform.environment import get_config_dir
-from ...services.llm import LLMClient
+from src.platform.environment import get_config_dir
+from src.services.llm import LLMClient
 from .common import ChainStep, PromptChain, ChainResult
 
 

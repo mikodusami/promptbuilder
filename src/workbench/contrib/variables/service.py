@@ -8,7 +8,7 @@ from dataclasses import dataclass, field
 from typing import Any, Optional
 import json
 
-from ...platform.environment import get_config_dir
+from src.platform.environment import get_config_dir
 
 
 @dataclass

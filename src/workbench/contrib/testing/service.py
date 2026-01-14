@@ -6,7 +6,7 @@ import json
 import asyncio
 from datetime import datetime
 
-from ...services.llm import LLMClient
+from src.services.llm import LLMClient
 from .common import TestCase, TestResult
 
 

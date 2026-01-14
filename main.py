@@ -35,26 +35,39 @@ except ImportError:
     MENU_AVAILABLE = False
 
 from src.core import PromptBuilder, PromptConfig, PromptType
-from src.contrib.history.service import HistoryService as PromptHistory
-from src.contrib.history.common import SavedPrompt
-from src.contrib.templates.service import TemplateService as TemplateManager
-from src.contrib.templates.common import CustomTemplate, YAML_AVAILABLE
 from src.platform.clipboard import copy_to_clipboard, is_clipboard_available
 from src.services.token_counter import TokenCounter, is_tiktoken_available
 from src.services.export import ExportService as PromptExporter, ExportMetadata as PromptMetadata, FORMAT_INFO as EXPORT_FORMATS, export_prompt
 from src.services.llm.config import LLMConfig as APIConfig
 from src.services.llm.client import LLMClient
-from src.contrib.optimizer.service import OptimizerService as PromptOptimizer
-from src.contrib.optimizer.common import OptimizationResult
-from src.contrib.testing.service import TestingService as PromptTestSuite
-from src.contrib.testing.common import TestCase, TestResult
-from src.contrib.chains.service import ChainService as ChainExecutor
-from src.contrib.chains.common import ChainStep, PromptChain, ChainResult
-from src.contrib.chains.builtin import BUILTIN_CHAINS
 from src.services.context import ContextManager
-from src.contrib.analytics.service import PromptAnalytics
-from src.contrib.nlgen.service import NaturalLanguageGenerator
-from src.contrib.variables.service import VariableInterpolator
+
+# Workbench discovery system - replaces hard-coded contrib imports
+from src.workbench import (
+    get_registry,
+    reset_registry,
+    CLIIntegration,
+    FeatureCategory,
+    FeatureContext,
+    FeatureResult,
+)
+
+# Import contrib services directly for backward compatibility during transition
+# These will be accessed via the discovery system in the future
+from src.workbench.contrib.history.service import HistoryService as PromptHistory
+from src.workbench.contrib.history.common import SavedPrompt
+from src.workbench.contrib.templates.service import TemplateService as TemplateManager
+from src.workbench.contrib.templates.common import CustomTemplate, YAML_AVAILABLE
+from src.workbench.contrib.optimizer.service import OptimizerService as PromptOptimizer
+from src.workbench.contrib.optimizer.common import OptimizationResult
+from src.workbench.contrib.testing.service import TestingService as PromptTestSuite
+from src.workbench.contrib.testing.common import TestCase, TestResult
+from src.workbench.contrib.chains.service import ChainService as ChainExecutor
+from src.workbench.contrib.chains.common import ChainStep, PromptChain, ChainResult
+from src.workbench.contrib.chains.builtin import BUILTIN_CHAINS
+from src.workbench.contrib.analytics.service import PromptAnalytics
+from src.workbench.contrib.nlgen.service import NaturalLanguageGenerator
+from src.workbench.contrib.variables.service import VariableInterpolator
 
 console = Console() if RICH_AVAILABLE else None
 
@@ -111,12 +124,13 @@ class InteractivePromptBuilder:
          "Multiple solutions for verification & consensus"),
     ]
 
-    def __init__(self):
+    def __init__(self, verbose: bool = False):
         self.builder = PromptBuilder()
         self.history = PromptHistory()
         self.template_manager = TemplateManager()
         self.token_counter = TokenCounter()
         self.preview_mode = False
+        self.verbose = verbose
         
         # Advanced features
         self.api_config = APIConfig()
@@ -128,12 +142,30 @@ class InteractivePromptBuilder:
         self.analytics = PromptAnalytics()
         self.nl_generator = NaturalLanguageGenerator(self.llm_client)
         
+        # Initialize the feature registry at startup (Requirements: 3.1, 3.3)
+        self.registry = get_registry()
+        
+        # Initialize CLI integration for discovered features
+        self.cli_integration = CLIIntegration(
+            console=console,
+            llm_client=self.llm_client,
+            history=self.history,
+            config=self.api_config,
+            analytics=self.analytics,
+            prompt_builder=self.builder,
+            registry=self.registry,
+        )
+        
         if not RICH_AVAILABLE:
             print("[yellow]Install 'rich' for the best experience: pip install rich[/]")
 
     def run(self):
         """Run the interactive prompt builder."""
         self._show_header()
+        
+        # Show discovery errors/warnings at startup if verbose (Requirements: 10.3, 10.4)
+        if self.verbose and self.cli_integration.has_discovery_issues():
+            self.cli_integration.show_discovery_errors()
 
         while True:
             action = self._show_main_menu()
@@ -954,8 +986,13 @@ class InteractivePromptBuilder:
         return default_provider, default_model
 
     def _ai_features_menu(self):
-        """Show AI-powered features menu."""
-        if not self.api_config.has_any_provider():
+        """Show AI-powered features menu using the discovery system.
+        
+        Requirements: 5.1, 5.4
+        """
+        has_api_key = self.api_config.has_any_provider()
+        
+        if not has_api_key:
             if RICH_AVAILABLE:
                 console.print(Panel(
                     "[yellow]No API keys configured![/]\n\n"
@@ -968,37 +1005,43 @@ class InteractivePromptBuilder:
                 print("\n⚠️ No API keys configured! Go to Settings to add your keys.\n")
             return
 
-        menu_options = [
-            "🪄 Generate from Description  - Describe task in plain English",
-            "✨ Optimize Prompt            - AI-powered prompt improvement",
-            "🧪 Test Prompt                - Test against selected models",
-            "⛓️  Prompt Chains              - Multi-step workflows",
-            "📊 Analytics                  - View usage statistics",
-            "🔙 Back                       - Return to main menu",
-        ]
-        actions = ["generate", "optimize", "test", "chains", "analytics", "back"]
-
+        # Get AI features from the registry
+        ai_features = self.registry.list_by_category(FeatureCategory.AI)
+        
         while True:
             if RICH_AVAILABLE:
                 console.print("\n[bold]🤖 AI Features[/] [dim](↑↓ to navigate, Enter to select)[/]\n")
+                
+                # Use CLIIntegration to render the AI features menu
+                self.cli_integration.render_feature_menu(
+                    title="AI Features",
+                    category=FeatureCategory.AI,
+                    has_api_key=has_api_key,
+                )
+                console.print()
+            
+            # Build menu options from discovered features
+            menu_options = []
+            for feature in ai_features:
+                m = feature.manifest
+                menu_options.append(f"{m.icon} {m.display_name:<24} - {m.description}")
+            menu_options.append("🔙 Back                       - Return to main menu")
             
             idx = interactive_select(menu_options, title="")
             
-            if idx is None or idx == 5:  # Back
+            if idx is None or idx == len(ai_features):  # Back
                 break
             
-            action = actions[idx] if idx is not None else "back"
-            
-            if action == "generate":
-                self._generate_from_description()
-            elif action == "optimize":
-                self._optimize_prompt()
-            elif action == "test":
-                self._test_prompt()
-            elif action == "chains":
-                self._prompt_chains_menu()
-            elif action == "analytics":
-                self._show_analytics()
+            if idx is not None and 0 <= idx < len(ai_features):
+                # Execute the selected feature using CLIIntegration
+                selected_feature = ai_features[idx]
+                result = self.cli_integration.execute_feature_sync(selected_feature)
+                
+                if not result.success and result.error:
+                    if RICH_AVAILABLE:
+                        console.print(f"[red]Error: {result.error}[/]")
+                    else:
+                        print(f"Error: {result.error}")
 
     def _generate_from_description(self):
         """Generate a prompt from natural language description."""
@@ -1523,7 +1566,17 @@ def quick_build(
 
 
 if __name__ == "__main__":
+    import argparse
+    
+    parser = argparse.ArgumentParser(description="Prompt Builder - Modern Prompt Engineering Techniques")
+    parser.add_argument(
+        "--verbose", "-v",
+        action="store_true",
+        help="Show detailed discovery logs and errors at startup"
+    )
+    args = parser.parse_args()
+    
     if not RICH_AVAILABLE:
         print("💡 Tip: Install 'rich' for a better experience: pip install rich\n")
-    app = InteractivePromptBuilder()
+    app = InteractivePromptBuilder(verbose=args.verbose)
     app.run()
