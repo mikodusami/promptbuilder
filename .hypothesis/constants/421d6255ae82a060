@@ -1,4 +1,0 @@
-# file: /Users/tishe/repos/promptbuilder/src/workbench/contrib/__init__.py
-# hypothesis_version: 6.150.2
-
-['FeatureCategory', 'FeatureContext', 'FeatureManifest', 'FeatureResult', 'FeatureRunner']
